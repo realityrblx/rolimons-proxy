@@ -27,23 +27,15 @@ app.listen(process.env.PORT || 3000, () => console.log("Running on port " + (pro
 app.get("/itemtype/:assetId", async (req, res) => {
 	const { assetId } = req.params;
 	try {
-		const r = await fetch(`https://catalog.roblox.com/v1/catalog/items/details`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"User-Agent": "Mozilla/5.0"
-			},
-			body: JSON.stringify({
-				items: [{ itemType: "Asset", id: parseInt(assetId) }]
-			})
+		const r = await fetch(`https://api.roblox.com/marketplace/productinfo?assetId=${assetId}`, {
+			headers: { "User-Agent": "Mozilla/5.0" }
 		});
 		const data = await r.json();
-		const item = data.data?.[0];
-		if (!item) return res.status(404).json({ error: "Not found" });
+		if (!data) return res.status(404).json({ error: "Not found" });
 
 		res.json({
-			type: item.assetType,  // e.g. "Hat", "Face", "Accessory"
-			name: item.name,
+			type: data.AssetTypeId,
+			name: data.Name,
 		});
 	} catch (e) {
 		res.status(500).json({ error: "Failed", detail: e.message });
