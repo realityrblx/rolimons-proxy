@@ -22,12 +22,10 @@ app.get("/item/:assetId", async (req, res) => {
 	}
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("Running on port " + (process.env.PORT || 3000)));
-
 app.get("/itemtype/:assetId", async (req, res) => {
 	const { assetId } = req.params;
 	try {
-		const r = await fetch(`https://api.roblox.com/marketplace/productinfo?assetId=${assetId}`, {
+		const r = await fetch(`https://economy.roblox.com/v2/assets/${assetId}/details`, {
 			headers: { "User-Agent": "Mozilla/5.0" }
 		});
 		const data = await r.json();
@@ -41,3 +39,5 @@ app.get("/itemtype/:assetId", async (req, res) => {
 		res.status(500).json({ error: "Failed", detail: e.message });
 	}
 });
+
+app.listen(process.env.PORT || 3000, () => console.log("Running on port " + (process.env.PORT || 3000)));
